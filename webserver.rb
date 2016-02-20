@@ -25,7 +25,7 @@ class WebServer
       #code to create a new request
       puts "Writing message"
       test_response = Response.new
-      client.puts test_response
+      client.print test_response
 
       client.close
     end

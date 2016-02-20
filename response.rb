@@ -3,12 +3,12 @@ class Response
   CONTENT_LENGTH_HEADER = "Content-Length"
 
   def initialize
-    @version = 1.1
+    @version = "HTTP/1.1"
     @headers = {
                 "Content-Type"      =>  "text/html",
                 "Content-Length"    =>  "0",
                 "Content-Language"  =>  "en",
-                "WWW-Authenticate"  =>  "Basic"
+#                "WWW-Authenticate"  =>  "Basic"
                }
 
     @body = "<html>
@@ -43,7 +43,7 @@ class Response
     end
  
     if _content_length > 0
-       str = str+ "\n" + @body
+       str = str+ "\n\n" + @body
     end
  
    return str
