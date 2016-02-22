@@ -1,3 +1,4 @@
+
 class Request
 =begin EXAMPLE HTTP REQUEST USED FOR TESTING
 POST /cgi-bin/process.cgi HTTP/1.1
@@ -54,3 +55,4 @@ licenseID=string&content=string&/paramsXML=string
       return self
     end
 end
+
