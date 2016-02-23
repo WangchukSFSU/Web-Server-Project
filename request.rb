@@ -11,7 +11,8 @@ Accept-Encoding: gzip, deflate
 Connection: Keep-Alive
 
 licenseID=string&content=string&/paramsXML=string
-=end attr_accessor :content, :http_method, :uri, :version, :headers, :body
+=end
+ attr_accessor :content, :http_method, :uri, :version, :headers, :body
     # Request creation 
 
     def initialize(request)
@@ -23,7 +24,6 @@ licenseID=string&content=string&/paramsXML=string
       @version = non_header_info[2] 
       @headers = Array.new
       @body = Array.new
- 
     end
 
     #Parse the request
@@ -54,5 +54,15 @@ licenseID=string&content=string&/paramsXML=string
       @headers = Hash[parsed_headers.map{|key, value| [key, value.strip]}]
       return self
     end
+
+   def to_s
+   puts "----------- REQUEST PARSED -------"
+   print "Method: ",http_method,"URI: ", uri ,"Version: ", version 
+   @headers.each do |key, array|
+  puts "#{key}-----"
+  puts array
+end  
+  print "BODY: ", body
+   end
 end
 

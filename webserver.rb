@@ -16,13 +16,19 @@ class WebServer
     loop do
       puts "Opening server socket to listen for connections"
       client = server.accept
-#      client.read_nonblock(1024,response);
+    #  client.read_nonblock(1024,response);
+        request_string = ""
        while next_line_readable?(client)
         line = client.gets
-        puts line.chop
+      #  puts line.chop
+        request_string <<  line.chop << "\n";
       end
-
-      #code to create a new request
+      puts "Request received: " + request_string;
+      
+      request = Request.new(request_string);
+      request.parse
+      puts request
+       #code to create a new request
       puts "Writing message"
       test_response = Response.new
       client.print test_response
