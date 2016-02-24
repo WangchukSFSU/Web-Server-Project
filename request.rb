@@ -1,4 +1,3 @@
-
 class Request
 =begin EXAMPLE HTTP REQUEST USED FOR TESTING
 POST /cgi-bin/process.cgi HTTP/1.1
@@ -12,7 +11,7 @@ Connection: Keep-Alive
 
 licenseID=string&content=string&/paramsXML=string
 =end
- attr_accessor :content, :http_method, :uri, :version, :headers, :body
+ attr_accessor :content, :http_method, :uri, :version, :headers, :body, :params
     # Request creation 
 
     def initialize(request)
@@ -20,15 +19,25 @@ licenseID=string&content=string&/paramsXML=string
       @content = request.split("\n")
       non_header_info = @content[0].split(" ")
       @http_method = non_header_info[0]
-      @uri =  non_header_info[1]
-      @version = non_header_info[2] 
+      @uri =  non_header_info[1].split('?')[0]
+      @version = non_header_info[2].split
       @headers = Array.new
       @body = Array.new
+      @params = Array.new
     end
 
     #Parse the request
     def parse
-      #uri = uri.split('?')[0]
+
+      
+      unparsed_query = Array.new
+      parsed_query = Array.new
+      unparsed_query = @content[1].split('?')[1].split('&')
+      parsed_query= unparsed_query.map{|x| x.split("=")}
+      @params = Hash[parsed_query.map{|key, value| [key, value.strip]}]
+
+
+
       index = 0
       flagged = 0
       unparsed_headers = Array.new
@@ -58,6 +67,9 @@ licenseID=string&content=string&/paramsXML=string
    def to_s
    puts "----------- REQUEST PARSED -------"
    print "Method: ",http_method,"URI: ", uri ,"Version: ", version 
+
+@params.each do |key, array|
+
    @headers.each do |key, array|
   puts "#{key}-----"
   puts array
@@ -65,4 +77,3 @@ end
   print "BODY: ", body
    end
 end
-
