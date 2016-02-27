@@ -17,10 +17,22 @@ licenseID=string&content=string&/paramsXML=string
     def initialize(request)
       
       @content = request.split("\n")
+      #puts "REQUEST INFO__________________"
+      puts @content
+      #puts "REQUEST INFO DONE_____________"
       non_header_info = @content[0].split(" ")
+      #puts non_header_info
+      #puts "NON HEADER INFO"
       @http_method = non_header_info[0]
-      @uri =  non_header_info[1].split('?')[0]
-      @version = non_header_info[2].split
+      @uri =  non_header_info[1]
+      #puts @uri.class
+      @version = non_header_info[2]
+      #not sure why version needs a split? uncomment if needed
+      #@version = non_header_info[2].split
+      #puts @http_method
+      #puts @uri
+      #puts @version
+      #puts "NON_HEADER INFO DONE"
       @headers = Array.new
       @body = Array.new
       @params = Array.new
@@ -32,10 +44,11 @@ licenseID=string&content=string&/paramsXML=string
       
       unparsed_query = Array.new
       parsed_query = Array.new
-      unparsed_query = @content[1].split('?')[1].split('&')
+      unparsed_query = @uri.to_s.split('?')[1].to_s.split('&')
+      #puts unparsed_query
       parsed_query= unparsed_query.map{|x| x.split("=")}
       @params = Hash[parsed_query.map{|key, value| [key, value.strip]}]
-
+      @uri = @uri.split('?', 2)[0]
 
 
       index = 0
@@ -59,21 +72,32 @@ licenseID=string&content=string&/paramsXML=string
           @body.push @content[i]
         }
       end
-      parsed_headers = unparsed_headers.map{|x| x.split(":")}
-      @headers = Hash[parsed_headers.map{|key, value| [key, value.strip]}]
+      parsed_headers = unparsed_headers.map{|x| x.split(":", 2)}
+      #puts "PARSED HEADERS"
+      #puts parsed_headers
+      #puts "PARSED HEADERS DONE"
+      @headers = Hash[parsed_headers.map{|key, value| [key, value.to_s.strip]}]
       return self
     end
 
    def to_s
-   puts "----------- REQUEST PARSED -------"
-   print "Method: ",http_method,"URI: ", uri ,"Version: ", version 
+     puts "----------- REQUEST PARSED -------"
+     puts "METHOD: #{http_method} ", "URI: #{uri} ",  "VERSION: #{version}\n\n"
 
-@params.each do |key, array|
+     if(@params.length != 0)
+       puts "PARAMETERS:"
+       @params.each do |key, array|
+         puts "#{key}: #{array}"
+       end
+     end
 
-   @headers.each do |key, array|
-  puts "#{key}-----"
-  puts array
-end  
-  print "BODY: ", body
+     puts "HEADERS:"
+     @headers.each do |key, array|
+       puts "#{key}: #{array}"
+     end  
+     
+     if(@body.length != 0)
+       puts "BODY:", @body
+     end
    end
 end
