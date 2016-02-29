@@ -92,9 +92,7 @@ licenseID=string&content=string&/paramsXML=string
      end
 
      puts "HEADERS:"
-     @headers.each do |key, array|
-       puts "#{key}: #{array}"
-     end  
+     puts @headers
      
      if(@body.length != 0)
        puts "BODY:", @body

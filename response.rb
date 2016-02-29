@@ -17,6 +17,21 @@ class Response
 #    @reason_phrase = params.fetch(:reason_phrase)
     @body = params.fetch(:body)
 =begin
+=======
+      RESPONSE_PHARASES = {
+      200 => 'OK',
+      201 => 'Successfully Created',
+      304 => 'Not Modified',
+      400 => 'Bad Request',
+      401 => 'Unauthorized',
+      403 => 'Forbidden',
+      404 => 'Not Found',
+      500 => 'Internal Server Error'
+    }
+
+  def initialize(params)
+
+>>>>>>> 2dcd6c7956e5aa0cbf7c2076466ddf1e14bf9f1c
     @version = "HTTP/1.1"
     @headers = {
                 "Content-Type"      =>  "text/html",
