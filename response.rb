@@ -2,7 +2,19 @@ class Response
 
   CONTENT_LENGTH_HEADER = "Content-Length"
 
-  def initialize
+      RESPONSE_PHARASES = {
+      200 => 'OK',
+      201 => 'Successfully Created',
+      304 => 'Not Modified',
+      400 => 'Bad Request',
+      401 => 'Unauthorized',
+      403 => 'Forbidden',
+      404 => 'Not Found',
+      500 => 'Internal Server Error'
+    }
+
+  def initialize(params)
+
     @version = "HTTP/1.1"
     @headers = {
                 "Content-Type"      =>  "text/html",

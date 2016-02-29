@@ -6,9 +6,16 @@ class WebServer
   attr_reader :options
 
   DEFAULT_PORT = 56789
-
+attr_accessor :request, :httpd_conf, :mimes
   def initialize(options={})
-    @options = options
+    
+     mimecontent = File.open('mime.types').read  
+     @mimes = MimeTypes.new(mimecontent)
+     mimecontent.close
+     httpd = File.open('httpd.conf').read       
+     @http_conf = HttpdConf.new(httpd)
+     httpd.close
+
   end
 
   def start
@@ -25,9 +32,11 @@ class WebServer
       end
       puts "Request received: " + request_string;
       
-      request = Request.new(request_string);
-      request.parse
+      request = Request.new(request_string).parse;
+     # request.parse
       puts request
+
+      Resource.new(@request, @httpd_conf, @mimes)
        #code to create a new request
       puts "Writing message"
       test_response = Response.new
