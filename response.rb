@@ -2,7 +2,21 @@ class Response
 
   CONTENT_LENGTH_HEADER = "Content-Length"
 
-  def initialize
+  attr_reader :http_version,:response_code,:reason_phrase,:headers,:body
+   
+  REASON_PHRASE = {200 => "OK",
+                   404 => "Page Not Found",
+                   401 => "Unauthorized",
+                   500 => "Internal Server Error",
+                   400 => "Bad Request"  }
+
+  def initialize(params)
+    @headers = params.fetch(:headers)
+    @http_version = params.fetch(:http_version)
+    @response_code= params.fetch(:response_code)
+#    @reason_phrase = params.fetch(:reason_phrase)
+    @body = params.fetch(:body)
+=begin
     @version = "HTTP/1.1"
     @headers = {
                 "Content-Type"      =>  "text/html",
@@ -16,15 +30,18 @@ class Response
                   This is my response
                </body>
              </html>"
-
+=end
     if ! @body.empty?
-        @headers["Content-Length"] = @body.length
-    end
+        @headers.add("Content-Length",@body.length)
+    else
+       @headers.add("Content-Length","0")
+     end
     @response_code=200
     @reason_phrase="OK"
   end
  
   def to_s
+=begin
     str = ""
     str = str + @version.to_s
     str = str + " "
@@ -47,6 +64,14 @@ class Response
     end
  
    return str
+
+=end
+<<-RESULT
+#{http_version} #{response_code} #{REASON_PHRASE[response_code]}
+#{headers}.to_s
+
+#{body}  
+RESULT
  end
 end
 

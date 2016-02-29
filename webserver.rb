@@ -1,7 +1,7 @@
 require 'socket'
 require_relative 'request'
 require_relative 'response'
-
+require_relative 'header_collection'
 class WebServer
   attr_reader :options
 
@@ -12,26 +12,42 @@ class WebServer
   end
 
   def start
-    response = ""
+     
     loop do
       puts "Opening server socket to listen for connections"
       client = server.accept
-    #  client.read_nonblock(1024,response);
+   
         request_string = ""
+    #    request_string = client.read
+    #    while line = client.gets
+     #     request_string <<  line.chop << "\n"
+     #    end
+
+
        while next_line_readable?(client)
-        line = client.gets
-      #  puts line.chop
-        request_string <<  line.chop << "\n";
+          line = client.gets
+         #  puts line
+          request_string <<  line.chop 
+          request_string << "\n"
       end
-      puts "Request received: " + request_string;
-      
+      puts "Request received: " + request_string;      
       request = Request.new(request_string);
       request.parse
       puts request
-       #code to create a new request
       puts "Writing message"
-      test_response = Response.new
-      client.print test_response
+      
+      #create a response
+      hc = HeaderCollections.new()
+      hc.add("Content-Type","text/html")
+      hc.add("Content-Length","0")
+      hc.add("Content-Language","en")
+#                "WWW-Authenticate"  =>  "Basic"
+      response = Response.new(:headers => hc,
+                              :response_code => "200",
+                              :http_version => "HTTP/1/1",
+                              :body => "<html><body>My response</body></html>")   
+#      test_response = Response.new
+      client.print response
 
       client.close
     end
