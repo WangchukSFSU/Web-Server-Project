@@ -4,6 +4,7 @@ require_relative 'response'
 require_relative 'header_collection'
 require_relative 'httpd_config'
 require_relative 'mime_types'
+require_relative 'resource'
 
 class WebServer
   attr_reader :options
@@ -39,17 +40,23 @@ attr_accessor :request, :httpd_conf, :mimes
               request_string <<  line.chop 
               request_string << "\n"
           end
-         puts "Request received: " + request_string     
+         puts "Request received: " + request_string 
+          
          request = Request.new(request_string)
          request.parse
          puts request
-         puts "Request received: " + request_string
-      
-         request = Request.new(request_string).parse
-         # request.parse
-         puts request
+         puts request.uri
 
-         #Resource.new(@request, @httpd_conf, @mimes)
+      
+         #puts "Request received: " + request_string
+      
+         #request = Request.new(request_string).parse
+         # request.parse
+         # puts request
+
+         resource = Resource.new(request.uri, @httpd_conf, @mimes)
+         absolute_path = resource.resolve
+         puts "------------ absolute path --------" + absolute_paths
          #code to create a new request
          puts "Writing message"
       

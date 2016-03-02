@@ -2,7 +2,7 @@ require_relative 'config'
 
 class HttpdConfig < Configure
 
-  attr_reader :server_root,:document_root,:listen,:logfile,:script_alias,:alias
+  attr_reader :server_root,:document_root,:listen,:logfile,:script_alias,:alias,:dir_index
   attr_reader :httpd_config
 
    def initialize(file)
@@ -45,4 +45,20 @@ class HttpdConfig < Configure
          puts
      end
      end
+
+     def alias?(uri)
+       @alias.has_key?(uri)
+     end
+
+     def get_alias(uri)
+        @alias[uri]
+      end
+
+      def script_alias?(uri)
+       @script_alias.has_key?(uri)
+     end
+
+     def get_script_alias(uri)
+        @script_alias[uri]
+      end
    end
