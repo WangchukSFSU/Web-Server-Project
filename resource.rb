@@ -1,6 +1,6 @@
 
   class Resource
-    attr_reader :uri, :httpd_conf, :mimes
+    attr_reader :uri, :conf, :mimes
 
     def initialize(uri, httpd_conf, mimes)
       
@@ -11,48 +11,66 @@
     end
 
     def resolve
-       modified_uri = ""
-       
-     if @conf.alias?(@uri)
-      puts @conf.alias?(@uri)
-       # if aliased?(@uri)
-       
-           alias1 = ""
-           uri_alias = @conf.get_alias(@uri)
-           
-           puts "JJJJJ " + uri_alias
-           modified_uri = uri_alias
 
-           puts "URI "+ @uri
-
-        #elsif script_aliased?
-          #elsif @httpd_conf.alias?(@uri)
-          # modified_uri = @httpd_conf.get_script_alias(@uri)    
-          #puts @httpd_conf.get_script_alias(@uri)
-          else
-            modified_uri = @uri
-        end
-
-
-         resolved_path = @conf.document_root + modified_uri
-         if ! File.file?(resolved_path)
-          puts " resolved_path" + resolved_path
-          puts " @conf.dir_index " + @conf.dir_index
-
-              absolute_path = resolved_path + @conf.dir_index
-              
-            else
-              
-               absolute_path = resolved_path
-           end
-
-           absolute_path
-
-    end
-
+      puts "in resolve " + @uri
+      uri_to_be_checked = @uri
+     
+      file = false
+      if @uri.include?(".")
+          file_name = File.basename @uri
+          uri_to_be_checked = File.dirname @uri
+          uri_to_be_checked.concat "/"
+          puts "  filename ",file_name,"uri ",uri_to_be_checked 
+      #    uri_to_be_checked = @uri.split('.')[-1] 
+          file = true
+      end
  
-  
+     if script? uri_to_be_checked
+         modified_uri = get_script_alias(uri_to_be_checked)
+     elsif alias? uri_to_be_checked
+         modified_uri = get_alias(uri_to_be_checked)
+     else
+         modified_uri = uri_to_be_checked
+     end
 
+#     modified_uri.insert(0,get_document_root)
+begin
+     modified_uri.prepend(get_document_root)
 
+     if file
+       modified_uri.concat file_name
+     else
+        modified_uri.concat get_directory_index
+     end
+    
+     puts "modified URI is :" + modified_uri
+end
+     modified_uri
+ 
+  end
+
+  def script?(uri)
+    @conf.script_alias?(uri)
+  end
+
+ def alias?(uri)
+   @conf.alias?(uri)
+  end
+ 
+  def get_script_alias(uri)
+    @conf.get_script_alias(uri)
+  end
+
+  def get_alias(uri)
+    @conf.get_alias(uri)
+  end
+
+ def get_document_root
+    @conf.document_root
+ end
+
+  def get_directory_index
+   @conf.dir_index
+  end
 
 end

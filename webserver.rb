@@ -28,11 +28,6 @@ attr_accessor :request, :httpd_conf, :mimes
          client = server.accept
    
          request_string = ""
-    #    request_string = client.read
-    #    while line = client.gets
-     #     request_string <<  line.chop << "\n"
-     #    end
-
 
           while next_line_readable?(client)
               line = client.gets
@@ -40,30 +35,23 @@ attr_accessor :request, :httpd_conf, :mimes
               request_string <<  line.chop 
               request_string << "\n"
           end
-         puts "Request received: " + request_string 
+       #  puts "Request received: " + request_string 
           
          request = Request.new(request_string)
          request.parse
          puts request
          puts request.uri
 
-      
-         #puts "Request received: " + request_string
-      
-         #request = Request.new(request_string).parse
-         # request.parse
-         # puts request
-
          resource = Resource.new(request.uri, @httpd_conf, @mimes)
          absolute_path = resource.resolve
-         puts "------------ absolute path --------" + absolute_paths
+         puts "------------ absolute path --------" + absolute_path
          #code to create a new request
          puts "Writing message"
       
          #create a response
          hc = HeaderCollections.new()
          hc.add("Content-Type","text/html")
-         hc.add("Content-Length","0")
+         hc.add("Content-Length","37")
          hc.add("Content-Language","en")
          #                "WWW-Authenticate"  =>  "Basic"
          response = Response.new(:headers => hc,

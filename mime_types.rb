@@ -16,12 +16,14 @@ attr_reader :mime_type,:file_path
            end
       end 
   
+   end
+ 
+  def to_s
      puts "MIME "
      @mime_type.each do |k,v|
         print k,"  ",v
         puts
      end
-   end
- 
+  end
 end
 

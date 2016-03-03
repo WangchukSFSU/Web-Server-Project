@@ -8,7 +8,15 @@ class Response
                    404 => "Page Not Found",
                    401 => "Unauthorized",
                    500 => "Internal Server Error",
-                   400 => "Bad Request"  }
+                   400 => "Bad Request", 
+                   201 => 'Successfully Created',
+                   304 => 'Not Modified',
+                   400 => 'Bad Request',
+                   401 => 'Unauthorized',
+                   403 => 'Forbidden',
+                   404 => 'Not Found',
+                   500 => 'Internal Server Error'
+                }
 
   def initialize(params)
     @headers = params.fetch(:headers)

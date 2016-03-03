@@ -9,14 +9,27 @@ class Configure
       end.map do |line|
           values = line.split(" ")
            key = values.shift
-           if mmap.has_key?(key)
+           key = trim key
+           if ! mmap.has_key?(key)
+              mmap[key] = []
+           end
               values.each do |value|
+                  value = trim value
                   mmap[key] << value
               end 
-           else
-               mmap[key] = values
-            end
       end   
    mmap 
   end
+  
+  def trim(string)
+    if string.to_s.empty?
+       return string
+    end
+    string =  string.chomp("\"")
+    if string[0,1] == "\""
+    string.slice!(0)
+    end
+    string
+  end
+
 end
