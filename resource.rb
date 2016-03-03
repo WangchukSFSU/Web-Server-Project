@@ -34,17 +34,16 @@
      end
 
 #     modified_uri.insert(0,get_document_root)
-begin
      modified_uri.prepend(get_document_root)
 
-     if file
+  #  puts "file : " + file
+    puts "modfied uri before " + modified_uri
+     if (file == true)
        modified_uri.concat file_name
      else
         modified_uri.concat get_directory_index
      end
     
-     puts "modified URI is :" + modified_uri
-end
      modified_uri
  
   end

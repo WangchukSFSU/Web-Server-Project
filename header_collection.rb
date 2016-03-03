@@ -11,6 +11,6 @@ class HeaderCollections
   def to_s
   @headers.map do |key,value|
     "#{key}: #{value}"
-  end.join('\n')
+  end.join("\n")
   end
 end
