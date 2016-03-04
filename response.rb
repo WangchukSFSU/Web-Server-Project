@@ -15,7 +15,8 @@ class Response
                    "401" => 'Unauthorized',
                    "403" => 'Forbidden',
                    "404" => 'Not Found',
-                   "500" => 'Internal Server Error'
+                   "500" => 'Internal Server Error',
+                   "204" => "No Content"
                 }
 
   def initialize(params)
@@ -25,10 +26,10 @@ class Response
 #    @reason_phrase = params.fetch(:reason_phrase)
     @body = params.fetch(:body)
 
-    if ! @body.empty?
-        @headers.add("Content-Length",@body.length)
-    else
+    if @body.nil? || @body.empty? 
        @headers.add("Content-Length","0")
+    else
+       @headers.add("Content-Length",@body.length)
      end
   end
  

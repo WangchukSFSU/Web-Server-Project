@@ -1,10 +1,11 @@
 
   class Resource
-    attr_reader :uri, :conf, :mimes
+   attr_reader :uri, :conf, :mimes, :resolved_uri,
+               :uri_without_doc_root,:script_flag
 
     def initialize(uri, httpd_conf, mimes)
       
-      @uri = uri
+      @uri = uri.clone
       @conf = httpd_conf
       @mimes = mimes
     
@@ -33,17 +34,20 @@
          modified_uri = uri_to_be_checked
      end
 
+      @uri_without_doc_root = modified_uri.clone
+
 #     modified_uri.insert(0,get_document_root)
      modified_uri.prepend(get_document_root)
 
   #  puts "file : " + file
-    puts "modfied uri before " + modified_uri
      if (file == true)
        modified_uri.concat file_name
      else
         modified_uri.concat get_directory_index
      end
+     @resolved_uri = modified_uri.clone
     
+      puts "URI without doc root" +  @uri_without_doc_root
      modified_uri
  
   end

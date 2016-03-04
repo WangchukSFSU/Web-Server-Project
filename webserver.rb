@@ -8,6 +8,8 @@ require_relative 'resource'
 require_relative 'htaccess_checker'
 require_relative 'response_factory'
 require_relative 'worker'
+require_relative 'logger'
+
 class WebServer
   attr_reader :options
 
@@ -25,14 +27,16 @@ attr_accessor :request, :httpd_conf, :mimes
 
    @httpd_conf.load    
    @mimes.load
+   logger = Logger.new(@httpd_conf.logfile)   
+
     loop do
          puts "Opening server socket to listen for connections"
          client = server.accept
 
-         Thread.new {
-            worker = Worker.new(client,@httpd_conf,@mimes)     
+#         Thread.new {
+            worker = Worker.new(client,@httpd_conf,@mimes,logger)     
             worker.handle_request
-         }   
+#         }   
    
      end
 
