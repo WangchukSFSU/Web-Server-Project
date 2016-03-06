@@ -17,6 +17,7 @@ class Worker
           while next_line_readable?(client)
                line = client.gets
                #  puts line
+               puts "LINE: #{line}"
                request_string <<  line.chop
                request_string << "\n"
            end

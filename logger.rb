@@ -7,8 +7,8 @@ class Logger
  end
 
  def write(request,response) 
-    host = request.headers["Host"]
-    auth_header = request.headers["Authorization"]
+    host = request.headers.get("Host")
+    auth_header = request.headers.get("Authorization")
     File.open(@filepath, 'a') do |file|
         file.write("\n\n" + host)
         if(! auth_header.nil? && ! auth_header.empty?)
