@@ -38,7 +38,7 @@ class HtaccessChecker
      decryptheader = Base64.decode64(encryptstring)
      key,value = decryptstring.split(':')
        if htpasswd.has_key?(key)
-        if htpasswd[key] == Digest::SHA1.base64digest(htpasswdlist[user])
+        if htpasswd[key] == Digest::SHA1.base64digest(value)
 
     flag = true
   end
