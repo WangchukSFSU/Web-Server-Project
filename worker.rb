@@ -13,7 +13,7 @@ class Worker
    
 #    begin
 
-       begin
+#       begin
           while next_line_readable?(client)
                line = client.gets
                #  puts line
@@ -26,13 +26,13 @@ class Worker
           request = Request.new(request_string)
           request.parse
           puts request
-       rescue
-           if ! client.closed?
-           client.print ResponseFactory.create_response("400")
-           client.close
-           return
-           end
-       end
+#       rescue
+#           if ! client.closed?
+#           client.print ResponseFactory.create_response("400")
+#           client.close
+#           return
+#           end
+#       end
 
        resource = Resource.new(request.uri, @conf, @mimes)
        absolute_path = resource.resolve

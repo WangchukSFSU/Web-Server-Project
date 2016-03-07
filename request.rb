@@ -75,8 +75,12 @@ class Request
      puts @headers
       
      puts
-     if(@body.length != 0)
+     if(! @body.nil? && @body.length != 0)
        puts "BODY:", @body
      end
+   end
+
+   def has_key?(key)
+     @headers.has_key?(key)
    end
 end

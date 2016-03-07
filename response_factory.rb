@@ -23,7 +23,7 @@ class ResponseFactory
              puts "NOT PROTECTED"
         end
 
-        if ! File.exists?(resource.resolved_uri)
+        if (!request.http_method == "PUT") && (! File.exists?(resource.resolved_uri))
                puts "404"
               return self.create_response("404")
         end
@@ -40,7 +40,7 @@ class ResponseFactory
         when "HEAD"
            return self.create_response("200")
         when "PUT"
-           self.create_file(resource.resolved_uri)
+           self.create_file(resource.resolved_uri,request.body)
            return self.create_response("201")
         when "DELETE"
            File.delete(resource.resolved_uri)

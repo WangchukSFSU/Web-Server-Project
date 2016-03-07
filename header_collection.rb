@@ -17,4 +17,10 @@ class HeaderCollections
     "#{key}: #{value}"
   end.join("\n")
   end
+ 
+ def has_key?(key)
+     @headers.has_key?(key)
+   end
+
+
 end

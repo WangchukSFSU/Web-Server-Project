@@ -33,13 +33,12 @@ class HtaccessChecker
 
   def authorized?
      flag = false
-     parse_file(file_path)
+     parse_file(path)
      encryptheader = request.headers["Authorization"].split(" ")[2]
      decryptheader = Base64.decode64(encryptstring)
      key,value = decryptstring.split(':')
        if htpasswd.has_key?(key)
         if htpasswd[key] == Digest::SHA1.base64digest(value)
-
     flag = true
   end
 

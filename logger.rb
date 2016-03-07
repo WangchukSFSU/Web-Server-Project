@@ -19,7 +19,10 @@ class Logger
      request_parameters = "\n" + request.http_method + 
                           " "  + request.uri + " " + request.version
      file.write(request_parameters)
-     file.write("\n" + response.response_code + " " + response.body.length.to_s)
+     file.write("\n" + response.response_code)
+     if ! response.body.nil? 
+     file.write(" " + response.body.length.to_s)
+     end
     end  
  end
 
