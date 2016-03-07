@@ -1,4 +1,4 @@
-AuthUserFile "/home/rubyserver/public/protected/.htpasswd"
+AuthUserFile "/home/Web-Server-Project/public_html/protected/.htpasswd"
 AuthType Basic
 AuthName "Authorized users only."
 Require valid-user
