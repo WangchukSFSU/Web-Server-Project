@@ -1,4 +1,7 @@
 
+      require 'base64'
+      require 'digest'
+
 class HtaccessChecker
 
   attr_reader :path,:request,:doc_root
@@ -15,7 +18,8 @@ class HtaccessChecker
      @path.split(File::SEPARATOR).map do |subdir|
          appended_path.concat(subdir=="" ? File::SEPARATOR : File::SEPARATOR + subdir)
          puts "checking path " + @doc_root + appended_path + "/.htaccess"
-         if(File.exists?(@doc_root + appended_path + "/.htaccess"))     
+         if(File.exists?(@doc_root + appended_path + "/.htaccess")) 
+         file_path = @doc_root << appended_path << "/.htaccess"    
             flag = true
             break
          end
@@ -29,7 +33,48 @@ class HtaccessChecker
 
   def authorized?
      flag = false
-    flag
+     parse_file(file_path)
+     encryptheader = request.headers["Authorization"].split(" ")[2]
+     decryptheader = Base64.decode64(encryptstring)
+     key,value = decryptstring.split(':')
+       if htpasswd.has_key?(key)
+        if htpasswd[key] == Digest::SHA1.base64digest(htpasswdlist[user])
+
+    flag = true
   end
+
+  end
+end
+
+
+      def parse_file(file_path)
+     file_lines = IO.readlines(file_path)
+      file_content = Hash.new
+file_lines.each do |line|
+  key, value = line.split(" ")
+  file_content[key.strip] = value.strip
+end
+end
+file_content
+end
+
+
+
+def htpasswd
+  htpasswdlist = Hash.new
+  htpasswd = IO.readlines(file_content[AuthUserFile])
+  htpasswd.each do |line|
+  key, value = line.split(':')
+  value.gsub(/{SHA}/,'' )
+  htpasswdlist[key.strip] = value.strip
+end
+end
+htpasswdlist
+end
+
+
+
+
+
 
 end
