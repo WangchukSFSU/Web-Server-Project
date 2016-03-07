@@ -54,9 +54,9 @@ file_lines.each do |line|
   key, value = line.split(" ")
   file_content[key.strip] = value.strip
 end
-end
 file_content
 end
+
 
 
 
@@ -68,7 +68,7 @@ def htpasswd
   value.gsub(/{SHA}/,'' )
   htpasswdlist[key.strip] = value.strip
 end
-end
+
 htpasswdlist
 end
 
