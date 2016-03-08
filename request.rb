@@ -37,14 +37,14 @@ class Request
       flagged = 0
       
       
-      unparsed_headers = @content[1].to_s.split("\n\n")
+      
       #puts "TESTING SPLIT"
       #puts unparsed_headers[0]
       #puts "TEST 2", unparsed_headers[1]
       #puts 'ENDING SPLIT'
 
 
-      unparsed_headers[0].each_line("\n"){ |line|
+      @content[1].each_line("\n"){ |line|
         if(line.chomp != nil)
           parsed_headers.push line.split(":", 2)
         end
@@ -54,11 +54,14 @@ class Request
       parsed_headers.map{|key, value| @headers.add(key, value.to_s.strip)
       }
       content_length = @headers.get("Content-Length").to_i
-      if(content_length != nil && content_length > 0)
-        @body = unparsed_headers[1].byteslice(0..content_length)
-      end
-      return self
+      #if(content_length != nil && content_length > 0)
+        #@body = unparsed_headers[1].byteslice(0..content_length)
+      #end
     end
+
+   def read_body(text)
+     @body = text
+   end
 
    def to_s
      puts "----------- REQUEST PARSED -------"

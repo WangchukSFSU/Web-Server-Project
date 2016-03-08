@@ -16,7 +16,11 @@ class Worker
 #       begin
           while next_line_readable?(client)
                line = client.gets
+               if(line == "\r\n")
+                 break
+               end
                #  puts line
+               puts line.length
                puts "LINE: #{line}"
                request_string <<  line.chop
                request_string << "\n"
@@ -24,7 +28,11 @@ class Worker
        #  puts "Request received: " + request_string 
 
           request = Request.new(request_string)
-          request.parse
+          status = request.parse
+          if(status != 0) 
+            body = client.readpartial(request.headers.get("Content-Length").to_i)
+            request.read_body(body)
+          end
           puts request
 #       rescue
 #           if ! client.closed?
