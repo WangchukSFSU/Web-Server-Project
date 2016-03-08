@@ -39,7 +39,8 @@ class Worker
        puts "------------ absolute path --------" + absolute_path
        #code to create a new request
 
-       response = ResponseFactory.create(request,resource,@conf.document_root)
+       response = ResponseFactory.create(request,resource,
+                                        @conf.document_root,@mime_types)
        @logger.write(request,response)
        puts response
        client.print response

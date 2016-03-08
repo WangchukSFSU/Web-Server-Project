@@ -2,7 +2,7 @@ require_relative 'response'
 
 class ResponseFactory
 
-   def self.create(request,resource,document_root)
+   def self.create(request,resource,document_root,mime)
      # response = Response.new()
     #  absolute_path = resource.resolve
        puts "response factory " + resource.uri_without_doc_root
@@ -23,7 +23,7 @@ class ResponseFactory
              puts "NOT PROTECTED"
         end
 
-        if (!request.http_method == "PUT") && (! File.exists?(resource.resolved_uri))
+        if (request.http_method.casecmp("PUT") != 0) && (! File.exists?(resource.resolved_uri))
                puts "404"
               return self.create_response("404")
         end
@@ -36,7 +36,13 @@ class ResponseFactory
        case request.http_method
         when "GET"
            contents,size = self.get_file_contents(resource.resolved_uri)
-           return self.generate_200_response(contents,size)
+           mime_type = mime.get_mime_type(File.extname(resource.resolved_uri)[1..-1])
+           puts "getting mime for extension " + (File.extname resource.resolved_uri)
+            if ! mime_type.nil? 
+              return self.generate_200_response(contents,size,mime_type)
+            else
+               return self.create_response("500")
+            end
         when "HEAD"
            return self.create_response("200")
         when "PUT"
@@ -76,9 +82,9 @@ class ResponseFactory
       out_file.close
     end
    
-   def self.generate_200_response(contents,size)
+   def self.generate_200_response(contents,size,mime)
          hc = HeaderCollections.new()
-         hc.add("Content-Type","text/html")
+         hc.add("Content-Type",mime)
          hc.add("Content-Length",size)
          hc.add("Content-Language","en")
          #                "WWW-Authenticate"  =>  "Basic"
@@ -98,4 +104,7 @@ class ResponseFactory
     hc.add("Content-Language","en")
    hc
   end
+
+ 
+  
 end

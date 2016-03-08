@@ -25,5 +25,9 @@ attr_reader :mime_type,:file_path
         puts
      end
   end
+  
+  def get_mime_type(extension)
+   @mime_type[extension]
+  end
 end
 

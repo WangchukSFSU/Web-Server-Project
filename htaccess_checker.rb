@@ -39,15 +39,16 @@ class HtaccessChecker
  def authorized?
    flag = false
 
-   @content = parse_file(file_path)
-   encryptheader = request.headers["Authorization"].split(" ")[1]
-   decryptheader = Base64.decode64(encryptstring)
-   key,value = decryptstring.split(':')
-
+   @content = parse_file
+   encryptheader = request.headers.get("Authorization").split(" ")[1]
+   decryptheader = Base64.decode64(encryptheader)
+   key,value = decryptheader.split(':')
+    puts "key value from header" + key + " " + value
    @htpasswdcontent = htpasswd
+   puts " value from file " + Digest::SHA1.base64digest(value) + "   " + htpasswdcontent[key] 
    if htpasswdcontent.has_key?(key)
-
-    if value == Digest::SHA1.base64digest(htpasswdcontent[key])
+     puts "found user"
+    if htpasswdcontent[key] == Digest::SHA1.base64digest(value)
       flag = true
     end
 
@@ -60,6 +61,11 @@ def parse_file
  file_content = Hash.new
  file_lines.each do |line|
   key, value = line.split(" ")
+  value =  value.chomp("\"")
+    if value[0,1] == "\""
+    value.slice!(0)
+    end
+
   file_content[key.strip] = value.strip
 end
 file_content
@@ -68,10 +74,10 @@ end
 
 def htpasswd
   htpasswdlist = Hash.new
-  htpasswd = IO.readlines(@content[AuthUserFile])
+  htpasswd = IO.readlines(@content["AuthUserFile"])
   htpasswd.each do |line|
     key, value = line.split(':')
-    value.gsub(/{SHA}/,'' )
+    value = value.gsub(/{SHA}/,'' )
     htpasswdlist[key.strip] = value.strip
   end
 
