@@ -1,4 +1,4 @@
-AuthUserFile "/home/Web-Server-Project/public_html/.htpasswd"
+AuthUserFile /home/Web-Server-Project/public_html/.htpasswd
 AuthType Basic
 AuthName "Authorized users only."
 Require valid-user
