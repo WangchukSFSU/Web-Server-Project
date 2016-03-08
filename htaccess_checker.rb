@@ -10,11 +10,12 @@ class HtaccessChecker
    @path = path
    @request = request
    @doc_root = document_root
-   @file_path =''
+   
+ end
+
+ @file_path =''
    @content =Hash.new
    @htpasswdcontent= Hash.new
-
- end
 
  def protected?
    flag = false
@@ -54,7 +55,7 @@ class HtaccessChecker
 end
 
 
-def parse_file(file_path)
+def parse_file
  file_lines = IO.readlines(file_path)
  file_content = Hash.new
  file_lines.each do |line|
