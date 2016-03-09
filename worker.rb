@@ -1,3 +1,8 @@
+require_relative 'request'
+require_relative 'response'
+require_relative 'resource'
+require_relative 'response_factory'
+
 class Worker
  attr_reader :client,:conf,:mime_types,:logger
 
@@ -16,7 +21,11 @@ class Worker
 #       begin
           while next_line_readable?(client)
                line = client.gets
+               if(line == "\r\n")
+                 break
+               end
                #  puts line
+               puts line.length
                puts "LINE: #{line}"
                request_string <<  line.chop
                request_string << "\n"
@@ -24,7 +33,11 @@ class Worker
        #  puts "Request received: " + request_string 
 
           request = Request.new(request_string)
-          request.parse
+          status = request.parse
+          if(status != 0) 
+            body = client.readpartial(request.headers.get("Content-Length").to_i)
+            request.read_body(body)
+          end
           puts request
 #       rescue
 #           if ! client.closed?
@@ -34,7 +47,7 @@ class Worker
 #           end
 #       end
 
-       resource = Resource.new(request.uri, @conf, @mimes)
+       resource = Resource.new(request.uri, @conf, @mimes,request.http_method)
        absolute_path = resource.resolve
        puts "------------ absolute path --------" + absolute_path
        #code to create a new request

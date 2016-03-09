@@ -1,8 +1,9 @@
 class Response
 
   CONTENT_LENGTH_HEADER = "Content-Length"
-
-  attr_reader :http_version,:response_code,:reason_phrase,:headers,:body
+   @cgi_response_flag = false
+  attr_reader :http_version,:response_code,:reason_phrase,:headers,:body,
+              :cgi_response
    
   REASON_PHRASE = {"200" => "OK",
                    "404" => "Page Not Found",
@@ -16,7 +17,8 @@ class Response
                    "403" => 'Forbidden',
                    "404" => 'Not Found',
                    "500" => 'Internal Server Error',
-                   "204" => "No Content"
+                   "204" => "No Content",
+                   "501" => "Not Implemented"
                 }
 
   def initialize(params)
@@ -24,40 +26,40 @@ class Response
     @http_version = params.fetch(:http_version)
     @response_code= params.fetch(:response_code)
 #    @reason_phrase = params.fetch(:reason_phrase)
-    @body = params.fetch(:body)
 
-    if @body.nil? || @body.empty? 
-       @headers.add("Content-Length","0")
-    else
-       @headers.add("Content-Length",@body.length)
-     end
+    if params.has_key?(:body)
+     @body = params.fetch(:body)
+   
+        if @body.nil? || @body.empty? 
+           @headers.add("Content-Length","0")
+        else
+           @headers.add("Content-Length",@body.length)
+        end
+    end
+
+    if params.has_key?(:cgi_response)
+        @cgi_response = params.fetch(:cgi_response)
+        @cgi_response_flag = true
+    end
   end
  
   def to_s
-=begin    
-   result =  @http_version
-   result << " "
-   result << @response_code 
-   result <<  " "
-   result  << REASON_PHRASE[@response_code]
-   result << "\n"
-   result <<  headers.to_s
-   if ! body.empty?
-    result << "\n" << @body
-   end
-  result
-=end
+ 
+     if @cgi_response_flag == true
+<<RESULT
+#{http_version} #{response_code} #{REASON_PHRASE[@response_code]}
+#{headers}
+#{cgi_response}  
+RESULT
 
-
+     else
 <<RESULT
 #{http_version} #{response_code} #{REASON_PHRASE[@response_code]}
 #{headers}
 
 #{body}  
 RESULT
-
+    end
  end
 end
 
-#test_response = Response.new
-#puts test_response.to_s

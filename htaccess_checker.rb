@@ -10,26 +10,24 @@ class HtaccessChecker
    @path = path
    @request = request
    @doc_root = document_root
-   
- end
-
- @file_path =''
    @content =Hash.new
    @htpasswdcontent= Hash.new
+ end
+
+
 
  def protected?
-   flag = false
-   appended_path = ""
-   @path.split(File::SEPARATOR).map do |subdir|
-     appended_path.concat(subdir=="" ? File::SEPARATOR : File::SEPARATOR + subdir)
-     puts "checking path " + @doc_root + appended_path + "/.htaccess"
-     if(File.exists?(@doc_root + appended_path + "/.htaccess")) 
-       @file_path = @doc_root << appended_path << "/.htaccess"    
+  flag = false
+  appended_path = ""
+  @path.split(File::SEPARATOR).map do |subdir|
+   appended_path.concat(subdir=="" ? File::SEPARATOR : File::SEPARATOR + subdir)
+   if(File.exists?(@doc_root + appended_path + "/.htaccess")) 
+       @file_path = @doc_root + appended_path +  "/.htaccess"    
        flag = true
        break
-     end
-   end
-   flag
+    end
+  end
+  flag
  end
 
  def can_authorized?
@@ -41,34 +39,33 @@ class HtaccessChecker
 
    @content = parse_file
    encryptheader = request.headers.get("Authorization").split(" ")[1]
-   decryptheader = Base64.decode64(encryptheader)
-   key,value = decryptheader.split(':')
-    puts "key value from header" + key + " " + value
-   @htpasswdcontent = htpasswd
-   puts " value from file " + Digest::SHA1.base64digest(value) + "   " + htpasswdcontent[key] 
-   if htpasswdcontent.has_key?(key)
-     puts "found user"
-    if htpasswdcontent[key] == Digest::SHA1.base64digest(value)
-      flag = true
-    end
+   if ! encryptheader.nil?
+      decryptheader = Base64.decode64(encryptheader)
+      key,value = decryptheader.split(':')
+      puts "key value from header" + key + " " + value
+      @htpasswdcontent = htpasswd
+     
+      if htpasswdcontent[key] == Digest::SHA1.base64digest(value)
+             flag = true
+      end
 
-  end
-end
+   end
+ end
+
 
 
 def parse_file
- file_lines = IO.readlines(file_path)
- file_content = Hash.new
- file_lines.each do |line|
-  key, value = line.split(" ")
-  value =  value.chomp("\"")
-    if value[0,1] == "\""
-    value.slice!(0)
-    end
-
-  file_content[key.strip] = value.strip
-end
-file_content
+   file_lines = IO.readlines(file_path)
+   file_content = Hash.new
+   file_lines.each do |line|
+      key, value = line.split(" ")
+      value =  value.chomp("\"")
+      if value[0,1] == "\""
+         value.slice!(0)
+      end
+      file_content[key.strip] = value.strip
+   end
+  file_content
 end
 
 
@@ -83,7 +80,5 @@ def htpasswd
 
   htpasswdlist
 end
-
-
 
 end

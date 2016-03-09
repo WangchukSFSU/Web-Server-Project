@@ -2,8 +2,8 @@ require_relative 'config'
 
 class HttpdConfig < Configure
 
-  attr_reader :server_root,:document_root,:listen,:logfile,:script_alias,:alias,:dir_index
-  attr_reader :httpd_config
+  attr_reader :server_root,:document_root,:listen,:logfile,:script_alias,
+              :alias,:dir_index,:httpd_config
 
    def initialize(file)
      @httpd_config = file
@@ -15,11 +15,6 @@ class HttpdConfig < Configure
   end
 
    def process_line(mmap)
-     puts "httpd parsed"
-     mmap.each do |key,val|
-       print key,val
-       puts
-     end
 
     @server_root =  mmap["ServerRoot"][0]
     @document_root = mmap["DocumentRoot"][0]
@@ -31,7 +26,6 @@ class HttpdConfig < Configure
     script_alias_array = mmap["ScriptAlias"]
     @script_alias = Hash[*script_alias_array]
 
-   to_s
    end
 
    def alias?(uri)
@@ -40,25 +34,11 @@ class HttpdConfig < Configure
 #     @alias.has_key?(uri)
    end
 
-   def get_alias(uri)
-   key = @alias.keys.select {|k| uri.include? k }
-   puts "key is" 
-    print key[0].to_s
-   @alias[key[0]]
-   #  @alias[uri]
-   end
-
    def script_alias?(uri)
 	    puts  @script_alias.any? {|k,v| uri.include?(k)}
     @script_alias.any? {|k,v| uri.include?(k)}
  #     @script_alias.has_key?(uri)
    end
-
-   def get_script_alias(uri)
-    puts @script_alias.fetch(@script_alias.keys.find {|k,v| uri.include? k})
-    # @script_alias[uri]
-    @script_alias.fetch(@script_alias.keys.find {|k| uri.include? k})
-  end
 
    def to_s
      puts "values : ----"

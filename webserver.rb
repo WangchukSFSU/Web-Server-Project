@@ -1,14 +1,9 @@
 require 'socket'
-require_relative 'request'
-require_relative 'response'
-require_relative 'header_collection'
 require_relative 'httpd_config'
-require_relative 'mime_types'
-require_relative 'resource'
-require_relative 'htaccess_checker'
-require_relative 'response_factory'
 require_relative 'worker'
 require_relative 'logger'
+require_relative 'mime_types'
+
 
 class WebServer
   attr_reader :options
@@ -28,16 +23,14 @@ attr_accessor :request, :httpd_conf, :mimes
    @httpd_conf.load    
    @mimes.load
    logger = Logger.new(@httpd_conf.logfile)   
-
+    Thread.abort_on_exception=true
     loop do
          puts "Opening server socket to listen for connections"
-         client = server.accept
 
-#         Thread.new {
+          Thread.start(server.accept) do |client|
             worker = Worker.new(client,@httpd_conf,@mimes,logger)     
             worker.handle_request
-#         }   
-   
+          end
      end
 
   end
