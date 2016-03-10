@@ -1,0 +1,4 @@
+AuthUserFile "/home/pooja/CSC667_work/web_server_project/public_html/protected/subprotected/.htpasswd"
+AuthType Basic
+AuthName "Authorized users only."
+Require valid-user
