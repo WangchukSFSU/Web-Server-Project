@@ -4,6 +4,9 @@ require_relative 'resources/worker'
 require_relative 'resources/logger'
 require_relative 'resources/config/mime_types'
 
+# Webserver class loads configuration files: httpd_config and mime_types
+# and listens to incoming requests on 56789 port. It creates a new worker thread# for each request to handle it.
+  
 module WebServer
 
   class WebServer
@@ -19,6 +22,7 @@ module WebServer
         @params = {}
     end
 
+   # loads configuration files, initialize logger and listen to incoming request
     def start
 
      # load config files

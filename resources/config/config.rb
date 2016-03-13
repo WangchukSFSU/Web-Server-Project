@@ -1,3 +1,5 @@
+# this is a parent class, provides helper functions for parsing of a 
+#configuration files and stores the values in hash in form of key, value pairs.
 module Configuration
    class Configure
 

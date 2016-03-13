@@ -1,5 +1,6 @@
 require_relative 'config'
 
+# parses mime_types file 
 module Configuration
     class MimeTypes < Configure
        attr_reader :mime_type,:file_path
@@ -9,6 +10,7 @@ module Configuration
          @mime_type = {}
        end
     
+       # calls parent class method: parse and store values in hash. 
        def load
            mmap = parse(@file_path)
            mmap.each do |key,values|
@@ -19,6 +21,7 @@ module Configuration
   
       end
  
+    # string representation of object
      def to_s
         puts "MIME "
         @mime_type.each do |k,v|

@@ -1,3 +1,5 @@
+# this class is responsible for resolving the URI provided in request 
+
 module WebServer
   class Resource
 
@@ -12,10 +14,10 @@ module WebServer
       @http_method = http_method
     end
 
-    # resolve aliases and script aliases 
+   # resolves URI: checks for aliases and script aliases and if found,replace
+   # them in the path,appends document root and index file if necessary. 
     def resolve
 
-      puts "in resolve " + @uri
       uri_to_be_resolved = @uri.clone
      
  
@@ -26,11 +28,9 @@ module WebServer
      else
          full_path = File.join(@conf.document_root,uri_to_be_resolved)
          @uri_without_doc_root = uri_to_be_resolved.clone
-         puts "URI without doc root" +  @uri_without_doc_root
      end
 
-     if (! File.file? full_path) &&
-          ( @http_method.casecmp("PUT") != 0) &&  (! script? @uri)
+     if (! File.file? full_path) && ( @http_method.casecmp("PUT") != 0)
           full_path = File.join(full_path,get_directory_index)
      end 
      
@@ -38,15 +38,17 @@ module WebServer
       full_path 
   end
 
- 
+  # check if URI is script alias
   def script?(uri)
     @conf.script_alias?(uri)
   end
 
+  # check if URI is alias
   def alias?(uri)
    @conf.alias?(uri)
   end
  
+  # repalce all aliases in provided path
   def replace_aliases(path)
       new_path = path.clone
        @conf.alias.each do |aliases,alias_path|
@@ -55,6 +57,7 @@ module WebServer
       new_path
   end
 
+  # replace all the script aliases in provided path
   def replace_script_aliases(path)
       new_path = path.clone
       @conf.script_alias.each do |s_aliases,script_alias_path|
@@ -62,6 +65,8 @@ module WebServer
       end
       new_path
   end
+
+  # helper functions
 
   def get_alias(uri)
     @conf.get_alias(uri)

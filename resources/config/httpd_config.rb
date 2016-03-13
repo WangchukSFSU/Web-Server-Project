@@ -1,5 +1,6 @@
 require_relative 'config'
 
+# parses httpd_config file
 module Configuration
    class HttpdConfig < Configure
 
@@ -10,6 +11,7 @@ module Configuration
          @httpd_config = file
        end
 
+     # loads config file and store values in instance variables.
       def load
          mmap = parse(@httpd_config)
          process_line(mmap)  
@@ -29,18 +31,17 @@ module Configuration
 
        end
 
+       # checks if provided URI is alias
        def alias?(uri)
-          puts @alias.any? {|k,v| uri.include? k}
           @alias.any? {|k,v| uri.include? k}
-#         @alias.has_key?(uri)
        end
 
+      # checks if provided URI is script_alias
        def script_alias?(uri)
-	    puts  @script_alias.any? {|k,v| uri.include?(k)}
             @script_alias.any? {|k,v| uri.include?(k)}
- #          @script_alias.has_key?(uri)
        end
 
+      # string representation of object
        def to_s
          puts "values : ----"
          print "server root : " ,@server_root," doc root ",@document_root

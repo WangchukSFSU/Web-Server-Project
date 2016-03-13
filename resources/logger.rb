@@ -1,12 +1,16 @@
+# This class is respoisble for logging each request and reponse into log file
+# mentioned in config file
+
 module WebServer
   class Logger
 
-    attr_reader :filepath,:file
+    attr_reader :filepath
 
     def initialize(filepath)
        @filepath = filepath
     end
 
+    # logs the request and response
     def write(request,response) 
        host = request.headers.get("Host")
        #  auth_header = request.headers.get("Authorization")
@@ -25,6 +29,7 @@ module WebServer
        end  
     end
 
+   # get user from request. If user is not found,return "Unknown" 
     def get_user(request)
       user = ""
       auth_header =  request.headers.get("Authorization")

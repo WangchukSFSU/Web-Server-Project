@@ -1,3 +1,5 @@
+# this class represents response to be sent to web client
+
 module WebServer
   class Response
 
@@ -23,6 +25,7 @@ module WebServer
                    "501" => "Not Implemented"
                 }
 
+   # initialize instance variables 
    def initialize(params)
       @headers = params.fetch(:headers)
       @http_version = params.fetch(:http_version)
@@ -45,6 +48,7 @@ module WebServer
       end
    end
  
+  # returns string representation of response object
    def to_s
  
      if @cgi_response_flag == true

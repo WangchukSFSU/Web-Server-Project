@@ -3,6 +3,8 @@ require_relative 'response'
 require_relative 'resource'
 require_relative 'response_factory'
 
+# this class is respoisble for handling single request. It reads incoming 
+# request, and writes a response to socket  
 module WebServer
    class Worker
       attr_reader :client,:conf,:mime_types,:logger
@@ -14,10 +16,11 @@ module WebServer
        @mime_types = mime
      end
 
+    # handles a single web client request.
      def handle_request
         request_string = ""
    
-       begin
+#       begin
 
           begin
             
@@ -26,13 +29,9 @@ module WebServer
                   if(line == "\r\n")
                     break
                   end
-                   #  puts line
-                  puts line.length
-                  puts "LINE: #{line}"
                   request_string <<  line.chop
                   request_string << "\n"
                end
-               #  puts "Request received: " + request_string 
 
                request = Request.new(request_string)
                status = request.parse
@@ -41,10 +40,14 @@ module WebServer
                   body = client.readpartial(content_length)
                  request.read_body(body)
                end
-               puts request
+               puts request.to_s
           rescue
               if ! client.closed?
-                client.print ResponseFactory.create_response("400")
+                response = ResponseFactory.create_response("400")
+                puts "-------Sending response:------ "
+                puts response.to_s
+                puts  "\n\n"
+                client.print response
                 client.close
                 return
                end
@@ -52,22 +55,27 @@ module WebServer
 
          resource = Resource.new(request.uri, @conf, @mimes,request.http_method)
          absolute_path = resource.resolve
-         puts "------------ absolute path --------" + absolute_path
-         #code to create a new request
+         puts "------------ absolute path --------" + absolute_path + "\n"
 
          response = ResponseFactory.create(request,resource,
                                         @conf.document_root,@mime_types)
          @logger.write(request,response)
-         puts response
+         puts "-----Sending response -------- "
+         puts response.to_s
+         puts "\n\n"
          client.print response
          client.close
 
-     rescue
-         if ! client.closed?
-           client.print ResponseFactory.create_response("500")
-           client.close
-         end
-      end
+#     rescue
+#         if ! client.closed?
+#           response = ResponseFactory.create_response("500")
+#           puts "---------Sending response-------- " 
+#           puts response
+#           puts  "\n\n"
+#           client.print response 
+#          client.close
+#         end
+#      end
     end
  
 

@@ -1,14 +1,14 @@
 require_relative 'response'
 require_relative 'htaccess_checker'
 
+# this class is resposible for generating response 
+
 module WebServer
   class ResponseFactory
 
+      # class method to generate appropriate response
      def self.create(request,resource,document_root,mime)
-     #  response = Response.new()
-    #   absolute_path = resource.resolve
        if (! resource.script? resource.uri) && (! resource.alias? resource.uri)
-           puts "response factory " + resource.uri_without_doc_root
        
            access_checker = HtaccessChecker.new(resource.uri_without_doc_root,
                                           request,document_root)
@@ -16,49 +16,37 @@ module WebServer
            if access_checker.protected?
              if ! access_checker.can_authorized?
                 return self.create_response("401")
-                puts "401"
-                #return 401
              elsif ! access_checker.authorized?
-                puts "403"
                 return self.create_response("403")
-                #return 403
              end
-           else
-              puts "NOT PROTECTED"
            end
         end
        
          if (request.http_method.casecmp("PUT") != 0) &&
             (! File.file?(resource.resolved_uri))
-               puts "404"
               return self.create_response("404")
          end
 
          if resource.script?(resource.uri)
-           return create_cgi_response(request,resource.resolved_uri)       
+           return create_cgi_response(request,resource.resolved_uri,mime)       
          end
  
       return self.handle_method(request,resource,document_root,mime)
     end
 
-
+    # handles GET,PUT,DELETE and HEAD requests
     def self.handle_method(request,resource,document_root,mime)
       case request.http_method
        when "GET"
-         contents,size = self.get_file_contents(resource.resolved_uri)
-         extension =  File.extname(resource.resolved_uri)
-         mime_type = mime.get_mime_type(extension[1..-1])
-         puts "getting mime for extension " +
-               (File.extname resource.resolved_uri)
-         if  mime_type.nil?
-          mime_type = "text/html"
-         end
-         return self.generate_200_response(contents,size,mime_type)
+        # if it is GET request, return contents of file
+         return self.handle_get_request(resource.resolved_uri,mime)
  
        when "HEAD"
+         # if it is HEAD request, generate 200 without any content
          return self.create_response("200")
      
        when "PUT"
+         # if it is PUT request, create a new file
          path = resource.resolved_uri
          if (File.directory? path) || (! File.directory? (File.dirname path))
            return self.create_response("404")
@@ -67,6 +55,7 @@ module WebServer
          return self.create_response("201")
   
        when "DELETE"
+          # if it is DELETE request, delete the file
          File.delete(resource.resolved_uri)
          return self.create_response("204")
       
@@ -75,11 +64,15 @@ module WebServer
      end
   end
 
-  def self.create_cgi_response(request,script)
+  # handles CGI script. calls the script and returns the generated response
+  def self.create_cgi_response(request,script,mime)
      if request.http_method.casecmp("GET") != 0
        return self.create_response("501")
      end
- 
+    
+     if(! File.executable? script)
+        return  self.handle_get_request(script,mime)
+     end
      modified_headers = request.headers.uppercase
      cgi_response = IO.popen([modified_headers,script]).read
      hc = HeaderCollections.new()
@@ -91,7 +84,18 @@ module WebServer
                  :http_version => "HTTP/1.1",})
    end
 
-  
+  # helper methods
+
+   def self.handle_get_request(path,mime) 
+     contents,size = self.get_file_contents(path)
+     extension =  File.extname(path)
+     mime_type = mime.get_mime_type(extension[1..-1])
+     if  mime_type.nil?
+        mime_type = "text/html"
+     end
+     return self.generate_200_response(contents,size,mime_type)
+   end
+
    def self.create_response(response_code)
       hc = self.generate_headers
       response = Response.new(:headers => hc,

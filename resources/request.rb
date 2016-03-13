@@ -1,9 +1,13 @@
 require_relative 'header_collection'
 
+# this class is responsible for  parsing the incoming request and storing the
+# values in instance variables
+
 module WebServer
   class Request
      attr_accessor :content, :http_method, :uri, :version, :headers,
                    :body, :params
+
 
    def initialize(request)
       
@@ -14,7 +18,7 @@ module WebServer
       @version = non_header_info[2]
       @headers = HeaderCollections.new
       @params = Array.new
-   
+      @body = ""
    end
 
     #Parse the request
@@ -34,9 +38,8 @@ module WebServer
           parsed_headers.push line.split(":", 2)
         end
       end
-        #puts "PARSED HEADERS"
-      #puts parsed_headers
-      parsed_headers.map do |key, value| 
+      
+     parsed_headers.map do |key, value| 
            @headers.add(key, value.to_s.strip)
       end
       content_length = @headers.get("Content-Length").to_i
@@ -46,8 +49,9 @@ module WebServer
      @body = text
    end
 
+   # returns string representation of object
    def to_s
-     puts "----------- REQUEST PARSED -------"
+     puts "----------- REQUEST RECEIVED -------"
      puts "METHOD: #{http_method} ", "URI: #{uri} ",  "VERSION: #{version}\n\n"
 
      if(@params.length != 0)

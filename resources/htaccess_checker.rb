@@ -2,6 +2,7 @@
 require 'base64'
 require 'digest'
 
+ # this class is responsible for checking authorization of user
 module WebServer
   class HtaccessChecker
 
@@ -15,6 +16,7 @@ module WebServer
          @htpasswdcontent= Hash.new
       end
 
+    # check if the path is protected i.e if .htaccess file is present in path
      def protected?
         flag = false
         appended_path = ""
@@ -31,10 +33,12 @@ module WebServer
       flag
     end
 
+    # checks if Authorization header is present in request
      def can_authorized?
        request.headers.has_key?("Authorization")
      end
 
+    # checks if user is authorized by verifying username and password
      def authorized?
         flag = false
 
@@ -43,18 +47,17 @@ module WebServer
         if ! encryptheader.nil?
             decryptheader = Base64.decode64(encryptheader)
             key,value = decryptheader.split(':')
-            puts "key value from header" + key + " " + value
             @htpasswdcontent = htpasswd
-     
-            if htpasswdcontent[key] == Digest::SHA1.base64digest(value)
+            if (!key.nil?) && (!key.empty?) && (!value.nil?) && (!value.empty?)
+             if htpasswdcontent[key] == Digest::SHA1.base64digest(value)
                flag = true
-            end
-
+             end
+           end
         end
      end
 
 
-
+    # parses .htaccess file
      def parse_file
         file_lines = IO.readlines(file_path)
         file_content = Hash.new
@@ -70,7 +73,7 @@ module WebServer
         file_content
     end
 
-
+    # decrypts the password in .htpasswd file
     def htpasswd
        htpasswdlist = Hash.new
        htpasswd = IO.readlines(@content["AuthUserFile"])
