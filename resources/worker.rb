@@ -20,7 +20,7 @@ module WebServer
      def handle_request
         request_string = ""
    
-#       begin
+       begin
 
           begin
             
@@ -66,16 +66,16 @@ module WebServer
          client.print response
          client.close
 
-#     rescue
-#         if ! client.closed?
-#           response = ResponseFactory.create_response("500")
-#           puts "---------Sending response-------- " 
-#           puts response
-#           puts  "\n\n"
-#           client.print response 
-#          client.close
-#         end
-#      end
+      rescue
+          if ! client.closed?
+            response = ResponseFactory.create_response("500")
+            puts "---------Sending response-------- " 
+            puts response
+            puts  "\n\n"
+            client.print response 
+           client.close
+         end
+      end
     end
  
 
